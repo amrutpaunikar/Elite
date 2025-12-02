@@ -15,11 +15,16 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.security.OAuthSuccessHandler;
+
 @Configuration
 public class SecurityConfig {
 
     @Autowired
     private JwtAuthFilter jwtAuthFilter;
+
+    @Autowired
+    private OAuthSuccessHandler successHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -27,7 +32,7 @@ public class SecurityConfig {
         http
                 // 🔥 MUST use lambda — old .disable() is NOT allowed
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(null)) // disable CORS for now (you can enable later)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // disable CORS for now (you can enable later)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
@@ -41,7 +46,7 @@ public class SecurityConfig {
                 )
                 .oauth2Login(oauth -> oauth
                     .loginPage("/googlelogin")
-                    .defaultSuccessUrl("/home", true))
+                    .successHandler(successHandler))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
