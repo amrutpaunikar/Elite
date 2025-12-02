@@ -28,7 +28,7 @@ public class AnalyticsController {
         return repo.count();
     }
 
-    @DeleteMapping("/google-logins/delete-all")
+    @DeleteMapping("delete-all")
     public String deleteAllLogins() {
         repo.deleteAll();
         return "All Google login records deleted successfully!";
