@@ -41,6 +41,7 @@ public class SecurityConfig {
                                     "/auth/reset-password").permitAll()
                     .requestMatchers("/googlelogin", "/oauth2/**").permitAll()
                     .requestMatchers("/logout-google").authenticated()
+                    .requestMatchers("/admin/**").authenticated()
                     .requestMatchers("/home").authenticated()
                     .anyRequest().authenticated()
             )
