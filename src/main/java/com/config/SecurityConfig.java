@@ -37,13 +37,13 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/signup", "/login", "/search", "/actuator/**").permitAll()
-                        .requestMatchers("/auth/forgot-password").permitAll()
-                        .requestMatchers("/auth/verify-otp").permitAll()
-                        .requestMatchers("/auth/reset-password").permitAll()
-                        .requestMatchers("/googlelogin").permitAll()
-                        .anyRequest().authenticated()
-                )
+                    .requestMatchers("/signup", "/login", "/search", "/actuator/**").permitAll()
+                    .requestMatchers("/auth/forgot-password",
+                                    "/auth/verify-otp",
+                                    "/auth/reset-password").permitAll()
+                    .requestMatchers("/googlelogin", "/oauth2/**", "/home").permitAll()
+                    .anyRequest().authenticated()
+            )
                 .oauth2Login(oauth -> oauth
                     .loginPage("/googlelogin")
                     .successHandler(successHandler))
