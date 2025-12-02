@@ -11,6 +11,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 public class SecurityConfig {
@@ -24,7 +27,7 @@ public class SecurityConfig {
         http
                 // 🔥 MUST use lambda — old .disable() is NOT allowed
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.disable()) // disable CORS for now (you can enable later)
+                .cors(cors -> cors.configurationSource(null)) // disable CORS for now (you can enable later)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
@@ -37,10 +40,35 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth -> oauth
-                    .loginPage("/googlelogin").defaultSuccessUrl("/home", true))
+                    .loginPage("/googlelogin")
+                    .defaultSuccessUrl("/home", true))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
+
+    @Bean
+public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration config = new CorsConfiguration();
+
+    // Allow your frontend
+    config.addAllowedOrigin("http://localhost:3000");         // local React
+    config.addAllowedOrigin("https://your-frontend.com");     // production frontend
+    config.addAllowedOriginPattern("http:localhost:5173"); // if you want all origins
+
+    // Allow headers
+    config.addAllowedHeader("*");
+
+    // Allow methods
+    config.addAllowedMethod("*");
+
+    // Allow cookies/authorization headers
+    config.setAllowCredentials(true);
+
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", config);
+
+    return source;
+}
 
     @Bean
     public PasswordEncoder passwordEncoder() {

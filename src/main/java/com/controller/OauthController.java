@@ -9,17 +9,18 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
-@RequestMapping
 public class OauthController {
     
     @RequestMapping("/user")
     public Principal user(Principal user) {
         return user;
     }
+
     @GetMapping("/googlelogin")
-public void redirectToGoogle(HttpServletResponse response) throws IOException {
-    response.sendRedirect("/oauth2/authorization/google");
-}
+    public String googleLogin() {
+        return "redirect:/oauth2/authorization/google";
+    }
+
     @GetMapping("/home")
 public String home() {
     return "home";
