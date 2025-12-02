@@ -20,7 +20,7 @@ public class LogoutController {
         }
     
         // Redirect to Google logout page, then back to your home
-        response.sendRedirect("https://accounts.google.com/Logout?continue=https://elite-production-5537.up.railway.app/googlelogin");
+        response.sendRedirect("https://accounts.google.com/Logout?continue=https://google.com");
     }
     
 }
