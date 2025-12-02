@@ -1,7 +1,5 @@
 package com.config;
 
-import java.beans.Customizer;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,12 +39,20 @@ public class SecurityConfig {
                     .requestMatchers("/auth/forgot-password",
                                     "/auth/verify-otp",
                                     "/auth/reset-password").permitAll()
-                    .requestMatchers("/googlelogin", "/oauth2/**", "/home").permitAll()
+                    .requestMatchers("/googlelogin", "/oauth2/**").permitAll()
+                    .requestMatchers("/logout-google").authenticated()
+                    .requestMatchers("/home").authenticated()
                     .anyRequest().authenticated()
             )
                 .oauth2Login(oauth -> oauth
                     .loginPage("/googlelogin")
                     .successHandler(successHandler))
+                .logout(logout-> logout
+                    .logoutUrl("/logout-google")
+                    .logoutSuccessUrl("/googlelogin")
+                    .invalidateHttpSession(true)
+                    .clearAuthentication(true)
+                )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
