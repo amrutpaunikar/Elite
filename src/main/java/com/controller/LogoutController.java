@@ -20,7 +20,7 @@ public class LogoutController {
         }
     
         // Redirect to Google logout page, then back to your home
-        response.sendRedirect("https://accounts.google.com/Logout?continue=https://google.com");
+        response.sendRedirect("https://www.google.com/");
     }
     
 }
