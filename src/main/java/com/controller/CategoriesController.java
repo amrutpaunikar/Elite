@@ -25,7 +25,7 @@ public class CategoriesController {
 
     @GetMapping()
     public List<Categories> getAllCategories(
-            @RequestParam(defaultValue = "1") int page) {
+            @RequestParam(defaultValue = "0") int page) {
 
         Pageable pageable = PageRequest.of(page, 10); // 10 items per page
         return repo.findAll(pageable).getContent();
