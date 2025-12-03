@@ -35,7 +35,8 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/signup", "/login", "/search","/categories","/categories/{id}","/categories/delete-all","/categories/bulk", "/actuator/**").permitAll()
+                    .requestMatchers("/signup", "/login", "/search", "/actuator/**").permitAll()
+                    .requestMatchers("/categories/**").permitAll()
                     .requestMatchers("/auth/forgot-password",
                                     "/auth/verify-otp",
                                     "/auth/reset-password").permitAll()
@@ -75,6 +76,8 @@ public CorsConfigurationSource corsConfigurationSource() {
     config.addAllowedMethod("POST");
     config.addAllowedMethod("PUT");
     config.addAllowedMethod("DELETE");
+    config.addAllowedMethod("Option");
+
     
 
     // Allow cookies/authorization headers
