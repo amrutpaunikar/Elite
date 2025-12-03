@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                     
                     auth -> auth
-                    .requestMatchers("/signup", "/login", "/search","/categories","/categories/{id}","/categories/delete-all","/categories/bulk", "/actuator/**").permitAll()
+                    .requestMatchers("/signup", "/login", "/search", "/actuator/**").permitAll()
                     .requestMatchers("/auth/forgot-password",
                                     "/auth/verify-otp",
                                     "/auth/reset-password").permitAll()
@@ -45,6 +45,7 @@ public class SecurityConfig {
                     .requestMatchers("/logout-google").authenticated()
                     .requestMatchers("/admin/**").authenticated()
                     .requestMatchers("/home").authenticated()
+                    .requestMatchers("/categories","/categories/{id}","/categories/delete-all","/categories/bulk").authenticated()
                     .anyRequest().authenticated()
             )
                 .oauth2Login(oauth -> oauth
