@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.model.Ccategories;
+import com.model.Categories;
 import com.repository.CategoriesRepository;
 
 @CrossOrigin(origins = "*")
