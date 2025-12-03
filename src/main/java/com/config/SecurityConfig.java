@@ -34,7 +34,9 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
-                .authorizeHttpRequests(auth -> auth
+                .authorizeHttpRequests(
+                    
+                    auth -> auth
                     .requestMatchers("/signup", "/login", "/search","/categories","/categories/{id}","/categories/delete-all","/categories/bulk", "/actuator/**").permitAll()
                     .requestMatchers("/auth/forgot-password",
                                     "/auth/verify-otp",
