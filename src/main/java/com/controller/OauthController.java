@@ -9,9 +9,9 @@ public class OauthController {
     
     
 
-    @GetMapping("/googlelogin")
+    @GetMapping("/dashboard")
     public String googleLogin() {
-        return "redirect:/oauth2/authorization/google";
+        return "redirect:http://localhost:5173";
     }
 
 }
