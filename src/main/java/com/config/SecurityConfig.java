@@ -71,7 +71,11 @@ public CorsConfigurationSource corsConfigurationSource() {
     config.addAllowedHeader("*");
 
     // Allow methods
-    config.addAllowedMethod("*");
+    config.addAllowedMethod("GET");
+    config.addAllowedMethod("POST");
+    config.addAllowedMethod("PUT");
+    config.addAllowedMethod("DELETE");
+    
 
     // Allow cookies/authorization headers
     config.setAllowCredentials(true);
