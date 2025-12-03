@@ -5,11 +5,12 @@ import java.security.Principal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+
+@Controller
 public class HomeController {
     
     @RequestMapping("/user")
@@ -17,17 +18,9 @@ public class HomeController {
         return user;
     }
 
-    
-    @GetMapping("/dashboard")
-    public ResponseEntity<Void> redirectToLocalhost() {
-        return ResponseEntity
-                .status(302)
-                .header("Location", "http://localhost:5137/")
-                .build();
-    }
 
     @GetMapping("/home")
     public String home(@AuthenticationPrincipal OAuth2User user) {
-        return "Logged in as: " + user.getAttribute("email");
+        return "redirect:http://localhost:5137/";
     }
 }
