@@ -28,84 +28,59 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-            .csrf(csrf -> csrf.disable())
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .sessionManagement(session ->
-                    session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                // 🔥 MUST use lambda — old .disable() is NOT allowed
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // disable CORS for now (you can enable later)
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                )
+                .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/signup", "/login", "/search","/categories","/categories/{id}","/categories/delete-all","/categories/bulk", "/actuator/**").permitAll()
+                    .requestMatchers("/auth/forgot-password",
+                                    "/auth/verify-otp",
+                                    "/auth/reset-password").permitAll()
+                    .requestMatchers("/googlelogin", "/oauth2/**").permitAll()
+                    .requestMatchers("/logout-google").authenticated()
+                    .requestMatchers("/admin/**").authenticated()
+                    .requestMatchers("/home").authenticated()
+                    .anyRequest().authenticated()
             )
-            .authorizeHttpRequests(auth -> auth
-                // PUBLIC ENDPOINTS
-                .requestMatchers(
-                        "/signup",
-                        "/login",
-                        "/search",
-                        
-                        // CATEGORY ENDPOINTS
-                        "/categories/add",
-                        "/categories/list",
-                        "/categories/get/**",
-                        "/categories/put/**",
-                        "/categories/delete/**",
-                        "/categories/delete-all",
-                        "/categories/bulk",
-
-                        // AUTH
-                        "/auth/forgot-password",
-                        "/auth/verify-otp",
-                        "/auth/reset-password",
-
-                        // GOOGLE LOGIN
-                        "/googlelogin",
-                        "/oauth2/**",
-
-                        // ACTUATOR
-                        "/actuator/**"
-                ).permitAll()
-
-                .requestMatchers("/logout-google").authenticated()
-                .requestMatchers("/admin/**").authenticated()
-                .requestMatchers("/home").authenticated()
-                .anyRequest().authenticated()
-            )
-            .oauth2Login(oauth -> oauth
-                .loginPage("/googlelogin")
-                .successHandler(successHandler)
-            )
-            .logout(logout -> logout
-                .logoutUrl("/logout-google")
-                .logoutSuccessUrl("/")
-                .invalidateHttpSession(true)
-                .clearAuthentication(true)
-            )
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
+                .oauth2Login(oauth -> oauth
+                    .loginPage("/googlelogin")
+                    .successHandler(successHandler))
+                .logout(logout-> logout
+                    .logoutUrl("/logout-google")
+                    .logoutSuccessUrl("/")
+                    .invalidateHttpSession(true)
+                    .clearAuthentication(true)
+                )
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
-
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
+public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration config = new CorsConfiguration();
 
-        config.addAllowedOrigin("http://localhost:3000");   // Local React
-        config.addAllowedOrigin("http://localhost:5173");   // Vite frontend
-        config.addAllowedOrigin("https://your-frontend.com"); // Production frontend
+    // Allow your frontend
+    config.addAllowedOrigin("http://localhost:3000");         // local React
+    config.addAllowedOrigin("https://your-frontend.com");     // production frontend
+    config.addAllowedOriginPattern("http:localhost:5173"); // if you want all origins
 
-        config.addAllowedHeader("*");
+    // Allow headers
+    config.addAllowedHeader("*");
 
-        config.addAllowedMethod("GET");
-        config.addAllowedMethod("POST");
-        config.addAllowedMethod("PUT");
-        config.addAllowedMethod("DELETE");
-        config.addAllowedMethod("OPTIONS");
+    // Allow methods
+    config.addAllowedMethod("*");
 
-        config.setAllowCredentials(true);
+    // Allow cookies/authorization headers
+    config.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", config);
 
-        return source;
-    }
+    return source;
+}
 
     @Bean
     public PasswordEncoder passwordEncoder() {
