@@ -39,7 +39,7 @@ public class SearchController {
 
         // If the call has a Bearer token, store the search into user's recentSearches
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
+           // String token = authHeader.substring(7);
             // JwtAuthFilter would normally set the authentication; here we try to fetch user by token optionally
             // To keep things simple we check SecurityContext
             var auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
