@@ -37,7 +37,7 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         repo.save(new GoogleLoginStats(email, name, picture, new Date()));
     
         // Redirect after login
-        this.setDefaultTargetUrl("/home");
+        this.setDefaultTargetUrl("/dashboard");
     
         super.onAuthenticationSuccess(request, response, authentication);
     }
