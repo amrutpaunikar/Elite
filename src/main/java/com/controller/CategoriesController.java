@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.model.Categories;
+import com.model.Ccategories;
 import com.repository.CategoriesRepository;
 
 @CrossOrigin(origins = "*")
@@ -25,11 +25,13 @@ public class CategoriesController {
         return ResponseEntity.ok(repo.save(cat));
     }
 
-    @GetMapping()
+    // FIX 1: Add path -> "/list"
+    // FIX 2: Default page = 0 (pagination starts at 0)
+    @GetMapping("/list")
     public List<Categories> getAllCategories(
-            @RequestParam(defaultValue = "1") int page) {
+            @RequestParam(defaultValue = "0") int page) {
 
-        Pageable pageable = PageRequest.of(page, 10); // 10 items per page
+        Pageable pageable = PageRequest.of(page, 10);
         return repo.findAll(pageable).getContent();
     }
 
@@ -66,10 +68,10 @@ public class CategoriesController {
         repo.deleteAll();
         return "All categories deleted successfully!";
     }
-    
+
+    // FIX 3: This remains POST only, so GET will not collide anymore
     @PostMapping("/bulk")
     public List<Categories> bulkInsert(@RequestBody List<Categories> list) {
         return repo.saveAll(list);
     }
-
 }
