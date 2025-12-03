@@ -42,7 +42,7 @@ public class CategoriesController {
     }
 
     // UPDATE
-    @PutMapping("/put{id}")
+    @PutMapping("/put/{id}")
     public Categories updateCategory(@PathVariable String id, @RequestBody Categories newData) {
 
         return repo.findById(id).map(cat -> {
