@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.model.Categories;
@@ -18,9 +19,9 @@ public class CategoriesController {
     private CategoriesRepository repo;
 
     // CREATE
-    @PostMapping()
-    public Categories createCategory(@RequestBody Categories cat) {
-        return repo.save(cat);
+    @PostMapping("/addCategory")
+    public ResponseEntity<?> createCategory(@RequestBody Categories cat) {
+        return ResponseEntity.ok(repo.save(cat));
     }
 
     @GetMapping()
