@@ -20,7 +20,7 @@ public class CategoriesController {
     private CategoriesRepository repo;
 
     // CREATE
-    @PostMapping("/addCategory")
+    @PostMapping("/add")
     public ResponseEntity<?> createCategory(@RequestBody Categories cat) {
         return ResponseEntity.ok(repo.save(cat));
     }
