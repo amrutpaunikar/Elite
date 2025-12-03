@@ -2,6 +2,7 @@ package com.controller;
 
 import java.security.Principal;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,15 @@ public class HomeController {
     @RequestMapping("/user")
     public Principal user(Principal user) {
         return user;
+    }
+
+    
+    @GetMapping("/dashboard")
+    public ResponseEntity<Void> redirectToLocalhost() {
+        return ResponseEntity
+                .status(302)
+                .header("Location", "http://localhost:5137/")
+                .build();
     }
 
     @GetMapping("/home")
