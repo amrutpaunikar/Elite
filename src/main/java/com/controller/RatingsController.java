@@ -33,12 +33,17 @@ public class RatingsController {
 
     // GET ALL (with pagination)
     @GetMapping("/allRatings")
-    public ResponseEntity<List<Ratings>> getAll(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(repo.findAll(pageable).getContent());
-    }
+public ResponseEntity<List<Ratings>> getAll(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size) {
+
+    Pageable pageable = PageRequest.of(page, size);
+
+    var pageData = repo.findAll(pageable);  // Page<Ratings>
+
+    return ResponseEntity.ok(pageData.getContent());
+}
+
 
     // GET BY ID
     @GetMapping("/{id}")
