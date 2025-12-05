@@ -45,7 +45,9 @@ public class SecurityConfig {
                     .requestMatchers("/logout-google").authenticated()
                     .requestMatchers("/admin/**").authenticated()
                     .requestMatchers("/home").authenticated()
-                    .requestMatchers("/categories","/categories/{id}","/categories/delete-all","/categories/bulk").authenticated()
+                    .requestMatchers("/categories","/categories/allCategories","/categories/{id}","/categories/delete-all","/categories/bulk").authenticated()
+                    .requestMatchers("/ratings/bulk","/ratings/add","/ratings/allRatings","/ratings/{id}","/ratings/update/{id}","/ratings/delete/{id}").authenticated()
+                    .requestMatchers("/locations/add","/locations/bulk","/locations/all","/locations/{id}","/locations/update/{id}","/locations/delete/{id}").authenticated()
                     .anyRequest().authenticated()
             )
                 .oauth2Login(oauth -> oauth
