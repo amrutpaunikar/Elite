@@ -41,7 +41,7 @@ public class SecurityConfig {
                     .requestMatchers("/auth/forgot-password",
                                     "/auth/verify-otp",
                                     "/auth/reset-password").permitAll()
-                    .requestMatchers("/googlelogin", "/oauth2/**", "/oauth/token", "/oauth/logout").permitAll()
+                    .requestMatchers("/googlelogin", "/oauth2/**").permitAll()
                     .requestMatchers("/logout-google").authenticated()
                     .requestMatchers("/admin/**").authenticated()
                     .requestMatchers("/home").authenticated()
