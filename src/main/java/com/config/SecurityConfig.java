@@ -53,7 +53,7 @@ public class SecurityConfig {
                     .successHandler(successHandler))
                 .logout(logout-> logout
                     .logoutUrl("/logout-google")
-                    .logoutSuccessUrl("/")
+                    .logoutSuccessUrl("/dashboard")
                     .invalidateHttpSession(true)
                     .clearAuthentication(true)
                 )

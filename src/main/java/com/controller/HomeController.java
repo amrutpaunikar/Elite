@@ -17,10 +17,4 @@ public class HomeController {
     public Principal user(Principal user) {
         return user;
     }
-
-
-    @GetMapping("/home")
-    public String home(@AuthenticationPrincipal OAuth2User user) {
-        return "redirect:http://localhost:5173/dashboard";
-    }
 }
