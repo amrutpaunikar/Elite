@@ -56,6 +56,7 @@ public class SecurityConfig {
                 .logout(logout-> logout
                     .logoutUrl("/logout-google")
                     .logoutSuccessUrl("/")
+                    .deleteCookies("token")
                     .invalidateHttpSession(true)
                     .clearAuthentication(true)
                 )

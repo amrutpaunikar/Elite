@@ -32,7 +32,7 @@ public class RatingsController {
     }
 
     // GET ALL (with pagination)
-    @GetMapping("/all")
+    @GetMapping("/allRatings")
     public ResponseEntity<List<Ratings>> getAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {

@@ -6,9 +6,13 @@ import com.service.JwtUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -17,7 +21,7 @@ import java.util.Date;
 import java.util.Map;
 
 @Component
-public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -27,29 +31,36 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         org.springframework.security.core.Authentication authentication)
-            throws IOException, jakarta.servlet.ServletException {
+            throws IOException, ServletException {
     
         OAuth2AuthenticationToken oauth = (OAuth2AuthenticationToken) authentication;
-        Map<String, Object> user = oauth.getPrincipal().getAttributes();
+        OAuth2User oAuthUser =(OAuth2User) oauth.getPrincipal().getAttributes();
     
-        String email = (String) user.get("email");
-        String name = (String) user.get("name");
-        String picture = (String) user.get("picture");
+        String email = oAuthUser.getAttribute("email");
+        String name = oAuthUser.getAttribute("name");
+        String picture = oAuthUser.getAttribute("picture");
         
     
         // Save login event to MongoDB
-        repo.save(new GoogleLoginStats(email, name, picture, new Date()));
+        
         String token = jwtUtils.generateToken(email, name);
         // Redirect after login
 
         request.getSession().setAttribute("jwt_token", token);
 
+        Cookie cookie = new Cookie("jwtToken", token);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true); // ENABLE HTTPS IN PRODUCTION
+        cookie.setPath("/");
+        cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+        cookie.setAttribute("SameSite", "None"); // for OAuth redirects
+        response.addCookie(cookie);
+
+        repo.save(new GoogleLoginStats(email, name, picture, new Date()));
+
         System.out.println("Generated JWT Token by Google = " + token);
-        this.setDefaultTargetUrl("/");
-
-
-    
-        super.onAuthenticationSuccess(request, response, authentication);
+        
+        response.sendRedirect("/");
     }
     
 }

@@ -149,3 +149,4 @@ This clears the session and invalidates the stored token.
 **Issue**: Session not persisting
 - **Solution**: Ensure cookies are enabled and `credentials: 'include'` is set in fetch requests. Check CORS configuration allows credentials.
 
+
