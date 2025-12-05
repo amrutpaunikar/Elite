@@ -23,7 +23,7 @@ public class CategoriesController {
         return repo.save(cat);
     }
 
-    @GetMapping()
+    @GetMapping("allCategories")
     public List<Categories> getAllCategories(
             @RequestParam(defaultValue = "0") int page) {
 
