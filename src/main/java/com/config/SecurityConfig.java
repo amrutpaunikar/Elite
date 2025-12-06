@@ -1,5 +1,7 @@
 package com.config;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -72,8 +74,8 @@ public CorsConfigurationSource corsConfigurationSource() {
     config.addAllowedOrigin("http://localhost:3000");         // local React
     config.addAllowedOrigin("https://your-frontend.com");     // production frontend
     config.addAllowedOrigin("https://your-frontends.com"); 
-    config.addAllowedOriginPattern("http://localhost:5173"); // if you want all origins
-
+    //config.addAllowedOriginPattern("http://localhost:5173"); // if you want all origins
+    config.setAllowedOrigins(List.of("http://localhost:5173"));
     // Allow headers
     config.addAllowedHeader("*");
 
