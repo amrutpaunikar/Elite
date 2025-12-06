@@ -31,7 +31,6 @@ public class RatingsController {
         return ResponseEntity.ok(repo.saveAll(list));
     }
 
-    // GET ALL (with pagination)
     @GetMapping("/allRatings")
 public ResponseEntity<List<Ratings>> getAll(
         @RequestParam(defaultValue = "0") int page,
@@ -39,11 +38,12 @@ public ResponseEntity<List<Ratings>> getAll(
 
     Pageable pageable = PageRequest.of(page, size);
 
-    var pageData = repo.findAll(pageable);  // Page<Ratings>
+    // MongoRepository supports this
+    org.springframework.data.domain.Page<Ratings> pageData = repo.findAll(pageable);
 
     return ResponseEntity.ok(pageData.getContent());
 }
-
+    
 
     // GET BY ID
     @GetMapping("/{id}")
