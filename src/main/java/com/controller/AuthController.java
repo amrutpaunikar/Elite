@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dto.AuthRequest;
 import com.dto.AuthResponse;
+import com.dto.LoginReq;
 import com.dto.SignupResponse;
 import com.model.User;
 import com.service.JwtUtils;
@@ -48,7 +49,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Validated @RequestBody AuthRequest req){
+    public ResponseEntity<?> login(@Validated @RequestBody LoginReq req){
         Optional<User> userOpt = userService.findByEmail(req.getEmail());
 
         if (userOpt.isEmpty()) {
