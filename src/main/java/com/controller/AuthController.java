@@ -38,7 +38,7 @@ public class AuthController {
                     .body(java.util.Map.of("error", "Email already in use"));
         }
 
-        User user = userService.createUser(req.getEmail(), req.getPassword());
+        User user = userService.createUser(req.getEmail(), req.getPassword(), req.getUsername());
 
         String token = jwtUtils.generateToken(user.getId(), user.getEmail());
 
