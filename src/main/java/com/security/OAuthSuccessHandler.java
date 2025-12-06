@@ -5,6 +5,7 @@ import com.repository.GoogleLoginStatsRepository;
 import com.service.JwtUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -26,40 +27,40 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
     @Autowired
     private GoogleLoginStatsRepository repo;
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request,
-                                        HttpServletResponse response,
-                                        org.springframework.security.core.Authentication authentication)
-            throws IOException, ServletException {
-    
-        OAuth2AuthenticationToken oauth = (OAuth2AuthenticationToken) authentication;
-        OAuth2User oAuthUser =(OAuth2User) oauth.getPrincipal().getAttributes();
-    
-        String email = oAuthUser.getAttribute("email");
-        String username = oAuthUser.getAttribute("username");
-        String name = oAuthUser.getAttribute("name");
-        String picture = oAuthUser.getAttribute("picture");
-        
-    
-        // Save login event to MongoDB
-        
-        String token = jwtUtils.generateToken(email, name);
-        // Redirect after login
+public void onAuthenticationSuccess(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    Authentication authentication)
+        throws IOException, ServletException {
 
-        request.getSession().setAttribute("jwt_token", token);
+    OAuth2AuthenticationToken oauth = (OAuth2AuthenticationToken) authentication;
+    OAuth2User oAuthUser = oauth.getPrincipal(); // FIXED
 
-        Cookie cookie = new Cookie("jwtToken", token);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true); // ENABLE HTTPS IN PRODUCTION
-        cookie.setPath("/");
-        cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
-        cookie.setAttribute("SameSite", "None"); // for OAuth redirects
-        response.addCookie(cookie);
+    String email = oAuthUser.getAttribute("email");
+    String name = oAuthUser.getAttribute("name");
+    String picture = oAuthUser.getAttribute("picture");
 
-        repo.save(new GoogleLoginStats(email, username, name, picture, new Date()));
+    // Google has no "username" attribute
+    String username = email != null ? email.split("@")[0] : name;
 
-        System.out.println("Generated JWT Token by Google = " + token);
-        
-        response.sendRedirect("/");
-    }
+    // Generate JWT
+    String token = jwtUtils.generateToken(email, name);
+
+    // Set cookie
+    Cookie cookie = new Cookie("jwtToken", token);
+    cookie.setHttpOnly(true);
+    cookie.setSecure(true);
+    cookie.setPath("/");
+    cookie.setMaxAge(7 * 24 * 60 * 60);
+    cookie.setAttribute("SameSite", "None");
+    response.addCookie(cookie);
+
+    // Save login record
+    repo.save(new GoogleLoginStats(email, username, name, picture, new Date()));
+
+    System.out.println("Generated JWT Token by Google = " + token);
+
+    response.sendRedirect("/");
+}
+
     
 }
