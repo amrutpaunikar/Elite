@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import jakarta.servlet.ServletException;
@@ -18,7 +17,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.Map;
 
 @Component
 public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
@@ -37,6 +35,7 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
         OAuth2User oAuthUser =(OAuth2User) oauth.getPrincipal().getAttributes();
     
         String email = oAuthUser.getAttribute("email");
+        String username = oAuthUser.getAttribute("username");
         String name = oAuthUser.getAttribute("name");
         String picture = oAuthUser.getAttribute("picture");
         
@@ -56,7 +55,7 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
         cookie.setAttribute("SameSite", "None"); // for OAuth redirects
         response.addCookie(cookie);
 
-        repo.save(new GoogleLoginStats(email, name, picture, new Date()));
+        repo.save(new GoogleLoginStats(email, username, name, picture, new Date()));
 
         System.out.println("Generated JWT Token by Google = " + token);
         
