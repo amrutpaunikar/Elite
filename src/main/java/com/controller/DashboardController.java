@@ -5,6 +5,7 @@ import com.model.User;
 import com.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -43,11 +44,13 @@ public class DashboardController {
     }
 
     @GetMapping("/profile")
-    public String profile(org.springframework.security.core.Authentication authentication){
-        User user = (User) authentication.getPrincipal();
-        var opt = userService.findById(user.getId());
-        User full = opt.get();
+public ResponseEntity<User> profile(Authentication authentication) {
 
-        return full.getUsername();
-    }
+    User user = (User) authentication.getPrincipal();
+    User full = userService.findById(user.getId())
+                           .orElseThrow(() -> new RuntimeException("User not found"));
+
+    return ResponseEntity.ok(full);
+}
+
 }
