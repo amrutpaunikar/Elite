@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DashboardController {
 
+
     @Autowired
     private UserService userService;
 
@@ -39,5 +40,14 @@ public class DashboardController {
         );
 
         return ResponseEntity.ok(resp);
+    }
+
+    @GetMapping("/profile")
+    public String profile(org.springframework.security.core.Authentication authentication){
+        User user = (User) authentication.getPrincipal();
+        var opt = userService.findById(user.getId());
+        User full = opt.get();
+
+        return full.getUsername();
     }
 }
