@@ -3,6 +3,9 @@ package com.controller;
 
 import com.model.User;
 import com.service.UserService;
+
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -44,13 +47,16 @@ public class DashboardController {
     }
 
     @GetMapping("/profile")
-public ResponseEntity<User> profile(Authentication authentication) {
+public ResponseEntity<?> profile(Authentication authentication) {
 
     User user = (User) authentication.getPrincipal();
-    User full = userService.findById(user.getId())
-                           .orElseThrow(() -> new RuntimeException("User not found"));
+    var opt = userService.findById(user.getId());
+    User full = opt.get();
 
-    return ResponseEntity.ok(full);
+    return ResponseEntity.ok(
+        Map.of("username", full.getUsername())
+    );
 }
+
 
 }
