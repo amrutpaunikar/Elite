@@ -30,15 +30,22 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private UserRepository userRepository;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
 
         String token = null;
 
-        // ✅ Read JWT from cookie
-        if (request.getCookies() != null) {
+        // ✅ 1. Try Authorization header (Postman / Mobile)
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+        }
+
+        // ✅ 2. If not found, try Cookie (Browser)
+        if (token == null && request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if ("jwtToken".equals(cookie.getName())) {
                     token = cookie.getValue();
@@ -47,7 +54,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
         }
 
-        // ✅ Validate token & authenticate
+        // ✅ 3. Validate & Authenticate
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             if (jwtUtils.validateToken(token)) {
@@ -63,7 +70,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                             new UsernamePasswordAuthenticationToken(
                                     user,
                                     null,
-                                    Collections.emptyList()
+                                    Collections.emptyList() // roles (if any)
                             );
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);

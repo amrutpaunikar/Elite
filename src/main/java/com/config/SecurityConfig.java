@@ -30,66 +30,53 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                // 🔥 MUST use lambda — old .disable() is NOT allowed
-                .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // disable CORS for now (you can enable later)
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                )
-                .authorizeHttpRequests(
-                    
-                    auth -> auth
-                    .requestMatchers("/signup", "/login", "/search", "/actuator/**").permitAll()
-                    .requestMatchers("/auth/forgot-password",
-                                    "/auth/verify-otp",
-                                    "/auth/reset-password").permitAll()
-                    .requestMatchers("/googlelogin", "/oauth2/**").permitAll()
-                    .requestMatchers("/logout-google").authenticated()
-                    .requestMatchers("/admin/**").authenticated()
-                    .requestMatchers("/home").authenticated()
-                    .requestMatchers("/categories","/categories/allCategories","/categories/{id}","/categories/delete-all","/categories/bulk").authenticated()
-                    .requestMatchers("/ratings/bulk","/ratings/add","/ratings/allRatings","/ratings/{id}","/ratings/update/{id}","/ratings/delete/{id}").authenticated()
-                    .requestMatchers("/locations/add","/locations/bulk","/locations/all","/locations/{id}","/locations/update/{id}","/locations/delete/{id}").authenticated()
-                    .anyRequest().authenticated()
+            .csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-                .oauth2Login(oauth -> oauth
-                    .loginPage("/googlelogin")
-                    .successHandler(successHandler))
-                .logout(logout-> logout
-                    .logoutUrl("/logout-google")
-                    .logoutSuccessUrl("/")
-                    .deleteCookies("jwtToken")
-                    .invalidateHttpSession(true)
-                    .clearAuthentication(true)
-                )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                        "/signup",
+                        "/login",
+                        "/search",
+                        "/actuator/**",
+                        "/auth/**",
+                        "/oauth2/**",
+                        "/googlelogin"
+                ).permitAll()
+                .requestMatchers("/categories/**").authenticated()
+                .requestMatchers("/ratings/**").authenticated()
+                .requestMatchers("/locations/**").authenticated()
+                .anyRequest().authenticated()
+            )
+            .oauth2Login(oauth -> oauth
+                .loginPage("/googlelogin")
+                .successHandler(successHandler)
+            )
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
     @Bean
-public CorsConfigurationSource corsConfigurationSource() {
-    CorsConfiguration config = new CorsConfiguration();
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
 
-    // Allow your frontend
-    config.addAllowedOrigin("http://localhost:3000");         // local React
-    config.addAllowedOrigin("https://your-frontend.com");     // production frontend
-    config.addAllowedOrigin("https://your-frontends.com"); 
-    //config.addAllowedOriginPattern("http://localhost:5173"); // if you want all origins
-    config.setAllowedOrigins(List.of("http://localhost:5173"));
-    // Allow headers
-    config.addAllowedHeader("*");
+        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of(
+                "Authorization",
+                "Content-Type",
+                "Accept"
+        ));
+        config.setAllowCredentials(true);
 
-    // Allow methods
-    config.addAllowedMethod("*");
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
 
-    // Allow cookies/authorization headers
-    config.setAllowCredentials(true);
-
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", config);
-
-    return source;
-}
+        return source;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
