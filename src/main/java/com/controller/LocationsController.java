@@ -12,6 +12,7 @@ import com.model.Locations;
 import com.repository.LocationsRepository;
 
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/locations")
 public class LocationsController {
