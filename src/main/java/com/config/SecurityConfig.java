@@ -41,7 +41,7 @@ public class SecurityConfig {
                         "/login",
                         "/search",
                         "/actuator/**",
-                        "/auth/**",
+                        "/auth/**","/auth/forgot-password",
                         "/oauth2/**",
                         "/googlelogin"
                 ).permitAll()
