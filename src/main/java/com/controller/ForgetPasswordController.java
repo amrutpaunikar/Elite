@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dto.SignupResponse;
 import com.model.User;
 import com.repository.UserRepository;
 import com.service.EmailService;
+import com.service.JwtUtils;
 import com.service.OtpService;
 
 @RestController
@@ -26,7 +28,9 @@ public class ForgetPasswordController {
 
     @Autowired
     private OtpService otpService;
-
+    
+    @Autowired
+    private JwtUtils jwtUtils;
 
     // 1️⃣ Forgot Password → Send OTP
     @PostMapping("/forgot-password")
@@ -40,12 +44,16 @@ public class ForgetPasswordController {
     
         User user = userOpt.get();
 
+        String token = jwtUtils.generateToken( user.getId(), user.getEmail());
+        SignupResponse resp = new SignupResponse(user.getId(), token);
+
         String otp = otpService.generateOtp();
         otpService.saveOtpToUser(user, otp);
 
         emailService.sendOtp(email, otp);
 
-        return ResponseEntity.ok("OTP sent to your email.");
+
+        return ResponseEntity.ok(resp);
     }
 
 
