@@ -41,13 +41,13 @@ public class SecurityConfig {
                         "/login",
                         "/search",
                         "/actuator/**",
-                        "/auth/**","/auth/forgot-password",
+                        "/auth/**","/auth/forgot-password","/auth/reset-password","/auth/verify-otp",
                         "/oauth2/**",
                         "/googlelogin"
                 ).permitAll()
                 .requestMatchers("/categories","/categories/allCategories","/categories/bulk").authenticated()
-                .requestMatchers("/ratings/**").authenticated()
-                .requestMatchers("/locations/**").authenticated()
+                .requestMatchers("/ratings/bulk","/ratings/add","/ratings/allRatings","/ratings/{id}","/ratings/update/{id}","/ratings/delete/{id}").authenticated()
+                .requestMatchers("/locations/add","/locations/bulk","/locations/all","/locations/{id}","/locations/update/{id}","/locations/delete/{id}").authenticated()
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth -> oauth
