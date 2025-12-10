@@ -45,9 +45,9 @@ public class SecurityConfig {
                         "/oauth2/**",
                         "/googlelogin"
                 ).permitAll()
-                .requestMatchers("/categories","/categories/allCategories","/categories/bulk").authenticated()
+                .requestMatchers("/categories","/categories/allCategories","/categories/bulk","/categories/delete-all","/categories/get/{id}","/categories/update/{id}","/categories/delete/{id}").authenticated()
                 .requestMatchers("/ratings/bulk","/ratings/add","/ratings/allRatings","/ratings/{id}","/ratings/update/{id}","/ratings/delete/{id}").authenticated()
-                .requestMatchers("/locations/add","/locations/bulk","/locations/all","/locations/{id}","/locations/update/{id}","/locations/delete/{id}").authenticated()
+                .requestMatchers("/locations/add","/locations/bulk","/locations/all","/locations/get/{id}","/locations/update/{id}","/locations/delete/{id}").authenticated()
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth -> oauth

@@ -43,7 +43,7 @@ public class LocationsController {
     }
 
     // GET BY ID
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     public ResponseEntity<Locations> getById(@PathVariable Long id) {
         return ResponseEntity.ok(repo.findById(id).orElse(null));
     }

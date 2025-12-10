@@ -33,13 +33,13 @@ public class CategoriesController {
     }
 
     // READ ONE
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     public Categories getCategory(@PathVariable String id) {
         return repo.findById(id).orElse(null);
     }
 
     // UPDATE
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public Categories updateCategory(@PathVariable String id, @RequestBody Categories newData) {
 
         return repo.findById(id).map(cat -> {
@@ -53,7 +53,7 @@ public class CategoriesController {
     }
 
     // DELETE
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public String deleteCategory(@PathVariable String id) {
         repo.deleteById(id);
         return "Category deleted: " + id;
